@@ -2,7 +2,7 @@
 
 set_time_limit(0);
 
-define('DOCKONTROL_NODE_VERSION', 0.2);
+define('DOCKONTROL_NODE_VERSION', 0.3);
 
 require_once(dirname(__FILE__).'/libs/api_libs.php');
 require_once(dirname(__FILE__).'/config/API_SECRET.php');
