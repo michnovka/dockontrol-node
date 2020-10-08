@@ -22,7 +22,7 @@ if($_GET['action'] == 'version'){
 	$response['os_version'] = trim(`cat /etc/debian_version`);
 	$response['uptime'] = round(trim(`awk '{print $1}' /proc/uptime`));
 
-	echo json_encode();
+	echo json_encode($response);
 	exit;
 }
 
