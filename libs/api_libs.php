@@ -3,6 +3,8 @@
 
 function DoAction($channel, $action, $duration = 0, $pause = 0){
 	$relay_location = dirname(dirname(__FILE__).'/../Relay.sh').'/Relay.sh';
+	file_put_contents('/tmp/log.txt', date('Y-m-d H:i:s')." | ".$relay_location."\n");
+	
     switch($action){
         case 'ON':
                 $output = `sudo $relay_location CH$channel ON`;
