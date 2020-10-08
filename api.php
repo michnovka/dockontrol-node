@@ -15,7 +15,14 @@ if($_GET['secret'] != $_SECRET){
 }
 
 if($_GET['action'] == 'version'){
-	echo json_encode(array('status'=>'ok', 'version' => DOCKONTROL_NODE_VERSION));
+	$response = array();
+	$response['status'] = 'ok';
+	$response['version'] = DOCKONTROL_NODE_VERSION;
+	$response['kernel_version'] = trim(`uname -a`);
+	$response['os_version'] = trim(`cat /etc/debian_version`);
+	$response['uptime'] = round(trim(`awk '{print $1}' /proc/uptime`));
+
+	echo json_encode();
 	exit;
 }
 
