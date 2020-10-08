@@ -25,17 +25,20 @@ if($_GET['action'] == 'version'){
 
 	echo json_encode($response);
 	exit;
+}elseif($_GET['action'] == 'update'){
+	$relay_location = dirname(__FILE__).'/Relay.sh';
+	`sudo $relay_location GITUPDATE`;
 }
 
 function APIError($message, $code){
-        echo json_encode(array('status' => 'error', 'code' => $code, 'message' => $message));
+	echo json_encode(array('status' => 'error', 'code' => $code, 'message' => $message));
 }
 
 $channel = intval($_GET['channel']);
 
 if($channel > 8 || $channel < 1){
-        APIError("Invalid channel. Min 1, max 8", 1);
-        exit;
+	APIError("Invalid channel. Min 1, max 8", 1);
+	exit;
 }
 
 $output = DoAction($channel, $_GET['action'], $_GET['duration'], $_GET['pause']);

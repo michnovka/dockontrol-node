@@ -1,6 +1,11 @@
 #!/bin/bash
 
-if [ $1 == 'CH8' ]
+if [ $1 == 'GITUPDATE' ]
+then
+cd `dirname "$(readlink -f "$0")"` > /dev/null &&
+git pull &&
+exit
+elif [ $1 == 'CH8' ]
 then
  ch=26
 elif [ $1 == 'CH7' ]
