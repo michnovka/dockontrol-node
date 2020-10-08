@@ -20,6 +20,7 @@ if($_GET['action'] == 'version'){
 	$response['version'] = DOCKONTROL_NODE_VERSION;
 	$response['kernel_version'] = trim(`uname -a`);
 	$response['os_version'] = trim(`cat /etc/debian_version`);
+	$response['device'] = trim(`cat /sys/firmware/devicetree/base/model`);
 	$response['uptime'] = round(trim(`awk '{print $1}' /proc/uptime`));
 
 	echo json_encode($response);
