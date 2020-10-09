@@ -2,7 +2,7 @@
 
 set_time_limit(0);
 
-define('DOCKONTROL_NODE_VERSION', 0.4);
+define('DOCKONTROL_NODE_VERSION', 0.5);
 
 
 if(php_sapi_name() === 'cli'){

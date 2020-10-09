@@ -23,7 +23,7 @@ function fetchCameraPicture($stream_url, $stream_login){
 	return curl_exec($ch);
 }
 
-$photo_data = fetchCameraPicture('http://'.$_GET['ip'].'/ISAPI/Streaming/channels/102/picture?videoResolutionWidth=1920&videoResolutionHeight=1080', $_GET['login']);
+$photo_data = fetchCameraPicture('http://'.$_GET['ip'].'/ISAPI/Streaming/channels/'.$_GET['channel'].'/picture?videoResolutionWidth=1920&videoResolutionHeight=1080', $_GET['login']);
 
 header('Content-type: image/jpeg');
 echo $photo_data;
