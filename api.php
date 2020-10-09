@@ -4,6 +4,14 @@ set_time_limit(0);
 
 define('DOCKONTROL_NODE_VERSION', 0.3);
 
+
+if(php_sapi_name() === 'cli'){
+	if($argv[1] == '--version'){
+		echo DOCKONTROL_NODE_VERSION;
+		exit;
+	}
+}
+
 require_once(dirname(__FILE__).'/libs/api_libs.php');
 require_once(dirname(__FILE__).'/config/API_SECRET.php');
 
@@ -28,6 +36,17 @@ if($_GET['action'] == 'version'){
 }elseif($_GET['action'] == 'update'){
 	$relay_location = dirname(__FILE__).'/Relay.sh';
 	`sudo $relay_location GITUPDATE`;
+
+	$response = array();
+	$response['status'] = 'ok';
+	$response['old_version'] = DOCKONTROL_NODE_VERSION;
+	$this_script = __FILE__;
+
+	$response['new_version'] = `php $this_script --version`;
+
+	echo json_encode($response);
+	exit;
+
 }
 
 function APIError($message, $code){
