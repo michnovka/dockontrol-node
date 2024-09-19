@@ -8,7 +8,7 @@ if (isset($_POST['action']) && isset($_POST['relay']) && isset($_POST['gpioPin']
     setcookie('gpio_pin_'. $gpioPin, $action == 'on');
 
     // Define GPIO chip
-    $gpioChip = 'gpiochip0';
+    $gpioChip = getenv('GPIO_DEVICE');
 
     if ($action === 'on') {
         $gpioAction = 0;
