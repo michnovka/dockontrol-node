@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
 // legacy camera script
 // TODO: remove when all nodes are upgraded to v2
 

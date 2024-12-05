@@ -1,9 +1,12 @@
 <?php
 
+require __DIR__ . '/../vendor/autoload.php';
+
+use DockontrolNode\GPIO;
 // legacy API script
 // TODO: remove when all nodes are upgraded to v2
 
-require_once(dirname(__FILE__).'/gpio_lib.php');
+require_once(dirname(__FILE__) . '/gpio_lib.php');
 
 function APIError($message, $code): never
 {
@@ -49,7 +52,7 @@ if(!in_array($_GET['action'] ?? '', ['ON', 'OFF'])){
 $reply = array();
 
 try {
-    gpioExecute($channel, $_GET['action'] == 'ON');
+    GPIO::gpioExecute($channel, $_GET['action'] == 'ON');
     $reply['status'] = 'ok';
     $reply['message'] = 'Relay '.$channel.' '.$_GET['action'];
 }catch(Exception $e){

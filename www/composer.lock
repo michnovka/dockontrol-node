@@ -1,0 +1,66 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "6207093d76a4ef222a4897202622b533",
+    "packages": [
+        {
+            "name": "michnovka/openwebnet-php",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/michnovka/openwebnet-php.git",
+                "reference": "b35e53679cca3ade84418563edf680cf8e1901cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/michnovka/openwebnet-php/zipball/b35e53679cca3ade84418563edf680cf8e1901cd",
+                "reference": "b35e53679cca3ade84418563edf680cf8e1901cd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-sockets": "*",
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "slevomat/coding-standard": "^8.14",
+                "squizlabs/php_codesniffer": "^3.10",
+                "vimeo/psalm": "^5.25",
+                "wp-coding-standards/wpcs": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Michnovka\\OpenWebNet\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "michnovka",
+                    "homepage": "https://github.com/michnovka/openwebnet-php"
+                }
+            ],
+            "description": "A PHP library to allow Bticino OpenWebNet protocol control",
+            "support": {
+                "issues": "https://github.com/michnovka/openwebnet-php/issues",
+                "source": "https://github.com/michnovka/openwebnet-php/tree/v1.1.0"
+            },
+            "time": "2024-07-08T20:56:51+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.6.0"
+}
