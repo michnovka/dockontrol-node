@@ -32,9 +32,11 @@ usermod -aG $group_name www-data
 
 echo "Done. User 'www-data' is now a member of the group with GID $TARGET_GID."
 
+# Ensure dependencies are installed
+composer install --no-dev --optimize-autoloader || exit 1
+
 # Fetch WireGuard configuration and bring up the interface
 php /scripts/fetch_wg_conf.php || exit 1
-
 
 # Bring down wg0 if it already exists
 if ip link show wg0 > /dev/null 2>&1; then
