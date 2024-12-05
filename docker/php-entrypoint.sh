@@ -8,6 +8,9 @@ cleanup() {
 
 trap 'cleanup' SIGTERM SIGINT
 
+# Create the update directory if it doesn't exist
+mkdir -p /var/www/html/var/update
+
 # Set the target GID
 TARGET_GID=$(stat -c "%g" ${GPIO_DEVICE})
 echo "Fetched GPIO GID: $TARGET_GID"
