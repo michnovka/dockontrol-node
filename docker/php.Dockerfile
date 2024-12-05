@@ -10,6 +10,9 @@ RUN apt update && apt install -y \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
+# Install ext-sockets
+RUN docker-php-ext-install sockets
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
