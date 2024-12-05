@@ -6,8 +6,6 @@ use DockontrolNode\GPIO;
 // legacy API script
 // TODO: remove when all nodes are upgraded to v2
 
-require_once(dirname(__FILE__) . '/gpio_lib.php');
-
 function APIError($message, $code): never
 {
     echo json_encode(array('status' => 'error', 'code' => $code, 'message' => $message));
