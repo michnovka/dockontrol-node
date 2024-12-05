@@ -17,8 +17,8 @@ fi
 echo "WireGuard IP: $WG_PEER_IP"
 
 # Substitute IP in nginx config
-export WG_PEER_IP
-envsubst '${WG_PEER_IP}' < /etc/nginx/conf.d/default.conf.tpl > /etc/nginx/conf.d/default.conf
+#export WG_PEER_IP
+#envsubst '${WG_PEER_IP}' < /etc/nginx/conf.d/default.conf.tpl > /etc/nginx/conf.d/default.conf
 
 # Start nginx
 nginx -g 'daemon off;'

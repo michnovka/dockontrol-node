@@ -28,7 +28,7 @@ RUN mkdir -p /var/run/php
 RUN chown -R www-data:www-data /var/run/php
 
 # Copy entrypoint script
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/php-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set the entrypoint to start PHP-FPM
