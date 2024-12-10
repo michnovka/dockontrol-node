@@ -126,17 +126,17 @@ function start() {
   fi
 
   # Get the WG0 interface IP address
-  WG0_IP=$(ip -4 addr show wg0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
-  if [ -z "$WG0_IP" ]; then
+  NGINX_LISTEN_IP=$(ip -4 addr show wg0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+  if [ -z "$NGINX_LISTEN_IP" ]; then
     echo "Failed to retrieve WG0 interface IP address."
     exit 1
   fi
-  echo "WG0 interface IP address: $WG0_IP"
+  echo "WG0 interface IP address: $NGINX_LISTEN_IP"
 
-  # Export WG0_IP as an environment variable
-  export WG0_IP
+  # Export NGINX_LISTEN_IP as an environment variable
+  export NGINX_LISTEN_IP
 
-  # Start docker compose with the WG0_IP environment variable
+  # Start docker compose with the NGINX_LISTEN_IP environment variable
   docker compose up -d || exit 1
   echo "Docker Compose started."
 }
