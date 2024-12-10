@@ -34,7 +34,7 @@ function fetch_config() {
 
   # Run the fetch script inside the php container and capture output
   echo "Fetching WireGuard configuration..."
-  WG_CONF=$(docker compose run --rm php php /scripts/fetch_wg_conf.php)
+  WG_CONF=$(docker compose run --rm --entrypoint "/usr/local/bin/php" php /scripts/fetch_wg_conf.php)
   if [ $? -ne 0 ]; then
     echo "Failed to fetch WireGuard configuration."
     exit 1
@@ -125,7 +125,18 @@ function start() {
     exit 1
   fi
 
-  # Start docker compose
+  # Get the WG0 interface IP address
+  WG0_IP=$(ip -4 addr show wg0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+  if [ -z "$WG0_IP" ]; then
+    echo "Failed to retrieve WG0 interface IP address."
+    exit 1
+  fi
+  echo "WG0 interface IP address: $WG0_IP"
+
+  # Export WG0_IP as an environment variable
+  export WG0_IP
+
+  # Start docker compose with the WG0_IP environment variable
   docker compose up -d || exit 1
   echo "Docker Compose started."
 }

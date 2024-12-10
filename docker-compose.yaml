@@ -32,7 +32,7 @@ services:
             php:
                 condition: service_healthy
         ports:
-            - "80:80"
+            - "${WG0_IP}:80:80"
         restart: unless-stopped
         networks:
             - app-network

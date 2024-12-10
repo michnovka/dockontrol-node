@@ -27,5 +27,11 @@ echo "Done. User 'www-data' is now a member of the group with GID $TARGET_GID."
 # Ensure dependencies are installed
 composer install --no-dev --optimize-autoloader || exit 1
 
-# Run php-fpm in the foreground
-exec php-fpm
+# Check if any arguments were passed
+if [ "$#" -gt 0 ]; then
+  # Execute the passed command
+  exec "$@"
+else
+  # No arguments passed; run php-fpm in the foreground
+  exec php-fpm
+fi

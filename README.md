@@ -49,3 +49,7 @@ then take pull and rebuild and restart containers
 ## Notes
 
 On 3-relay board the mapping for Relay.sh is CH8 ->1, CH6 -> 2, CH7 -> 3
+
+## TODO
+
+setup cron script in dockontrol-node.sh
