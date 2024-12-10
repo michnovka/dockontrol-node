@@ -18,7 +18,7 @@ if(empty($_SECRET)) {
     APIError("No API secret configured.", 403);
 }
 
-if($_GET['secret'] != $_SECRET){
+if($_GET['secret'] ?? '' != $_SECRET){
     APIError("Authentication error", 403);
 }
 
