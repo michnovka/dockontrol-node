@@ -13,6 +13,7 @@ services:
             DOCKONTROL_URL: ${DOCKONTROL_URL}
             API_PUBLIC_KEY: ${API_PUBLIC_KEY}
             API_PRIVATE_KEY: ${API_PRIVATE_KEY}
+            LEGACY_API_SECRET: ${LEGACY_API_SECRET}
         healthcheck:
             test: ["CMD-SHELL", "pgrep php-fpm"]
             interval: 10s
