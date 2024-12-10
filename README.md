@@ -4,7 +4,7 @@ This is code for peripheral Raspberry Pi with relay that works together with htt
 
 ## Requirements
 
-Docker (tested on v27)
+Docker (tested on v27), wg-quick, wireguard kernel module loaded
 
 ## Hardware
 
@@ -22,19 +22,28 @@ cd dockontrol-node
 cp .env.example .env
 nano .env
 
-# Build and run docker
-docker compose build
-docker compose up -d
+# Check dependencies
+./dockontrol-node.sh check-dependencies
+
+# Build
+./dockontrol-node.sh build
+
+# Fetch config
+./dockontrol-node.sh fetch-config
+
+# Start
+./dockontrol-node.sh start
 ```
 
-If configured properly, the docker will set up wg0 tunnel to the main dockontrol server.
 
 ### Auto-update
 
-You can set-up auto-update (enable `AUTO_UPDATE=1` in `.env`) by configuring a cron that runs as root
+You can set up auto-update by configuring a cron that runs as root.
+The server will then check every so often if there are new commits in the `prod` branch and if yes
+then take pull and rebuild and restart containers
 
 ```crontab
-0 * * * *  /bin/bash path/to/project/scripts/auto_update.sh
+0 * * * *  /bin/bash path/to/project/dockontrol-node.sh update
 ```
 
 ## Notes

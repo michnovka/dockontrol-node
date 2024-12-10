@@ -1,16 +1,14 @@
-FROM php:8.3.11-fpm
+FROM php:8.3.14-fpm
 
 # Install necessary packages
 RUN apt update && apt install -y \
     gpiod \
     libgpiod-dev \
     netcat-openbsd \
-    wireguard-tools \
-    iproute2 \
     procps \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ext-sockets
+# Install ext-sockets (for michnovka/openwebnet-php)
 RUN docker-php-ext-install sockets
 
 # Install Composer
@@ -22,16 +20,8 @@ WORKDIR /var/www/html
 # Copy scripts
 COPY scripts/ /scripts/
 
-# Copy custom PHP-FPM pool configuration
-COPY config/php-fpm/www.conf /usr/local/etc/php-fpm.d/www.conf
-
-# Remove the override docker conf that makes it listen on 9000
-RUN rm /usr/local/etc/php-fpm.d/zz-docker.conf
-
 # Set ownership and permissions
 RUN chown -R www-data:www-data /var/www/html
-RUN mkdir -p /var/run/php
-RUN chown -R www-data:www-data /var/run/php
 
 # Copy entrypoint script
 COPY docker/php-entrypoint.sh /usr/local/bin/entrypoint.sh
