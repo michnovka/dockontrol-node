@@ -98,4 +98,49 @@ class API
         // Return the decoded JSON data
         return $jsonData;
     }
+
+
+    /**
+     * @param array<mixed> $data
+     */
+    public static function performDockontrolNodeAPIResponse(
+        string $apiPrivKey,
+        int $timestampFromRequest,
+        string $signatureFromRequest,
+        array $data,
+        int $httpCode = 200,
+    ): never {
+        $jsonData = json_encode($data);
+
+        // Create the data string for signature
+        $dataString = $timestampFromRequest . $signatureFromRequest . $jsonData;
+
+        // Compute the signature
+        $signature = hash_hmac('sha256', $dataString, $apiPrivKey);
+
+        http_response_code($httpCode);
+        header('Content-Type: application/json');
+        header('X-API-SIGNATURE: ' . $signature);
+        echo $jsonData;
+        exit;
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    public static function verifyDockontrolNodeAPIReply(
+        string $apiPrivKey,
+        int $timestampFromRequest,
+        string $signatureFromRequest,
+        string $signatureFromResponse,
+        string $jsonData,
+    ): bool {
+        // Create the data string for signature
+        $dataString = $timestampFromRequest . $signatureFromRequest . $jsonData;
+
+        // Compute the signature
+        $signature = hash_hmac('sha256', $dataString, $apiPrivKey);
+
+        return $signature === $signatureFromResponse;
+    }
 }

@@ -8,6 +8,7 @@ use DockontrolNode\GPIO;
 
 function APIError($message, $code): never
 {
+    header('Content-type: application/json');
     echo json_encode(array('status' => 'error', 'code' => $code, 'message' => $message));
     exit;
 }

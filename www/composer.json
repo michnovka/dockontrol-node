@@ -5,6 +5,7 @@
     }
   },
   "require": {
-    "michnovka/openwebnet-php": "^1.1"
+    "michnovka/openwebnet-php": "^1.1",
+    "ext-curl": "*"
   }
 }
