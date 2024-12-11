@@ -128,7 +128,7 @@ class API
     /**
      * @param array<mixed> $data
      */
-    public static function verifyDockontrolNodeAPIReply(
+    public static function verifyDockontrolNodeAPIResponse(
         string $apiPrivKey,
         int $timestampFromRequest,
         string $signatureFromRequest,
@@ -142,5 +142,37 @@ class API
         $signature = hash_hmac('sha256', $dataString, $apiPrivKey);
 
         return $signature === $signatureFromResponse;
+    }
+    /**
+     * @param array<mixed> $data
+     */
+    public static function verifyDockontrolNodeAPIRequest(
+        string $apiPubKey,
+        string $apiPrivKey,
+        string $apiKeyFromRequest,
+        int $timestampFromRequest,
+        string $signatureFromRequest,
+        string $method,
+        string $endpoint,
+        string $body,
+    ): bool {
+
+        if($apiKeyFromRequest !== $apiPubKey) {
+            return false;
+        }
+
+        if(abs(time() - $timestampFromRequest) >= 10) {
+            return false;
+        }
+
+        $data = $timestampFromRequest . $method . $endpoint . $body;
+
+        $computedSignature = hash_hmac('sha256', $data, $apiPrivKey);
+
+        if (!hash_equals($computedSignature, $signatureFromRequest)) {
+            return false;
+        }
+
+        return true;
     }
 }
