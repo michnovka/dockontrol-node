@@ -4,6 +4,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use DockontrolNode\GPIO;
 use DockontrolNode\API;
+use Michnovka\OpenWebNet\OpenWebNet;
+use Michnovka\OpenWebNet\OpenWebNetDebuggingLevel;
 
 function APISignedError(string $message, int $httpCode): never
 {
@@ -63,6 +65,56 @@ switch($_POST['action'] ?? ''){
         $response['os_version'] = trim(`cat /etc/debian_version`);
         $response['device'] = trim(`cat /sys/firmware/devicetree/base/model`);
         $response['uptime'] = round(trim(`awk '{print $1}' /proc/uptime`));
+        break;
+
+    case 'action':
+        if(empty($_POST['payload'])){
+            APISignedError("No payload", 400);
+        }
+
+        $payload = json_decode($_POST['payload'], true);
+
+        if(json_last_error() != JSON_ERROR_NONE){
+            APISignedError("Invalid payload", 400);
+        }
+
+        try {
+            switch ($payload['type'] ?? '') {
+                case 'relay':
+                    if (!isset($payload['channel'])) {
+                        APISignedError("No channel", 400);
+                    }
+
+                    GPIO::pulse($payload['channel']);
+                    $response['status'] = 'ok';
+                    $response['message'] = 'Relay ' . $payload['channel'] . ' ' . $payload['action'];
+                    break;
+                case 'openwebnet':
+                    $_OPENWEBNET_IP = getenv('OPENWEBNET_IP');
+                    $_OPENWEBNET_PORT = intval(getenv('OPENWEBNET_PORT'));
+                    $_OPENWEBNET_PASSWORD = getenv('OPENWEBNET_PASSWORD');
+
+                    if(empty($_OPENWEBNET_IP) || empty($_OPENWEBNET_PORT) || empty($_OPENWEBNET_PASSWORD)){
+                        APISignedError("No OpenWebNet configuration", 400);
+                    }
+
+                    // channel can be 0
+                    if (!isset($payload['channel']) || !is_numeric($payload['channel'])) {
+                        APISignedError("No channel", 400);
+                    }
+
+                    $own = new OpenWebNet($_OPENWEBNET_IP, $_OPENWEBNET_PORT, $_OPENWEBNET_PASSWORD, OpenWebNetDebuggingLevel::NONE);
+                    $own = $own->GetDoorLockInstance();
+                    $own->OpenDoor(intval($payload['channel']));
+
+                    break;
+                default:
+                    APISignedError("Unknown payload type", 400);
+            }
+        }catch (Throwable $e){
+            APISignedError($e->getMessage(), 500);
+        }
+
         break;
 }
 

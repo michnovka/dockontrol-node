@@ -44,14 +44,45 @@ if($channel > 8 || $channel < 1){
     APIError("Invalid channel. Min 1, max 8", 1);
 }
 
-if(!in_array($_GET['action'] ?? '', ['ON', 'OFF'])){
+if(!in_array($_GET['action'] ?? '', ['ON', 'OFF', 'PULSE', 'DOUBLECLICK'])){
     APIError("Invalid action", 1);
 }
 
 $reply = array();
 
 try {
-    GPIO::gpioExecute($channel, $_GET['action'] == 'ON');
+
+    switch ($_GET['action']) {
+        case 'ON':
+            GPIO::on($channel);
+            break;
+        case 'OFF':
+            GPIO::off($channel);
+            break;
+        case 'PULSE':
+            $duration = intval($_GET['duration'] ?? 0);
+            if(!$duration){
+                APIError("Invalid duration for PULSE", 2);
+            }
+            GPIO::pulse($channel, $duration);
+            break;
+
+        case 'DOUBLECLICK':
+            $duration = intval($_GET['duration'] ?? 0);
+            $pause = intval($_GET['pause'] ?? 0);
+
+            if(!$duration){
+                APIError("Invalid duration for PULSE", 2);
+            }
+            if(!$pause){
+                APIError("Invalid pause for PULSE", 2);
+            }
+
+            GPIO::doubleClick($channel, $duration, $pause);
+            break;
+
+    }
+
     $reply['status'] = 'ok';
     $reply['message'] = 'Relay '.$channel.' '.$_GET['action'];
 }catch(Exception $e){
