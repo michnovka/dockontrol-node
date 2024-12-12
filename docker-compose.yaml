@@ -29,7 +29,7 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
-        restart: unless-stopped
+        restart: no
         networks:
             - app-network
 
@@ -44,7 +44,7 @@ services:
                 condition: service_healthy
         ports:
             - "${NGINX_LISTEN_IP:-127.0.0.1}:80:80"
-        restart: unless-stopped
+        restart: no
         networks:
             - app-network
 

@@ -25,16 +25,12 @@ nano .env
 # Check dependencies
 ./dockontrol-node.sh check-dependencies
 
-# Build
-./dockontrol-node.sh build
-
-# Fetch config (not needed, the start command does it too)
-./dockontrol-node.sh fetch-config
+# Install, set up startup and build containers
+./dockontrol-node.sh install
 
 # Start
 ./dockontrol-node.sh start
 ```
-
 
 ### Auto-update
 

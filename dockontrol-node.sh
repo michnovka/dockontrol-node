@@ -8,6 +8,12 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# Determine the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Change the working directory to the script directory
+cd "$SCRIPT_DIR" || exit 1
+
 COMMAND=$1
 shift
 
@@ -142,6 +148,24 @@ function start() {
   echo "Docker Compose started."
 }
 
+function start_up() {
+  # Wait until 1.1.1.1 or 8.8.8.8 is pingable
+  echo "Waiting for internet connectivity..."
+  while true; do
+    if ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 || ping -c 1 -W 1 8.8.8.8 >/dev/null 2>&1; then
+      echo "Internet connectivity detected."
+      break
+    else
+      echo -n "."
+      sleep 5
+    fi
+  done
+
+  # Call the existing start function
+  start
+}
+
+
 function logs() {
   docker compose logs "$@"
 }
@@ -198,6 +222,51 @@ function update() {
   fi
 }
 
+function install() {
+  # Determine the absolute path to the script
+  SCRIPT_PATH=$(realpath "$0")
+  # The line to be added to /etc/rc.local
+  LINE_TO_ADD="$SCRIPT_PATH start-up # DOCKontrol node"
+
+  # Check if /etc/rc.local exists; if not, create it with the proper shebang
+  if [ ! -f /etc/rc.local ]; then
+    echo "#!/bin/bash" > /etc/rc.local
+    chmod +x /etc/rc.local
+  fi
+
+  # Check if the line already exists in /etc/rc.local
+  if grep -Fqx "$LINE_TO_ADD" /etc/rc.local; then
+    echo "The start-up command is already present in /etc/rc.local. Skipping..."
+  else
+    # Insert the line before 'exit 0' if it exists, or append at the end
+    if grep -Fqx "exit 0" /etc/rc.local; then
+      # Insert the line before 'exit 0'
+      sed -i "/^exit 0/i $LINE_TO_ADD" /etc/rc.local
+    else
+      # Append the line at the end
+      echo "$LINE_TO_ADD" >> /etc/rc.local
+    fi
+    echo "Added start-up command to /etc/rc.local."
+  fi
+
+  # Ensure Docker is enabled to start on boot
+  echo "Enabling Docker to start on boot..."
+  if systemctl is-enabled docker >/dev/null 2>&1; then
+    echo "Docker is already enabled to start on boot."
+  else
+    if systemctl enable docker; then
+      echo "Docker has been enabled to start on boot."
+    else
+      echo "Failed to enable Docker service. Please check if Docker is installed correctly."
+    fi
+  fi
+
+  echo "Building docker images..."
+  build
+  echo "ALL DONE. Start with:"
+  echo "$SCRIPT_PATH start"
+}
+
 case $COMMAND in
   check-dependencies)
     check_dependencies
@@ -214,6 +283,9 @@ case $COMMAND in
   start)
     start
     ;;
+  start-up)
+    start_up
+    ;;
   logs)
     logs "$@"
     ;;
@@ -223,8 +295,11 @@ case $COMMAND in
   update)
     update
     ;;
+  install)
+    install
+    ;;
   *)
-    echo "Usage: $0 {check-dependencies|fetch-config|build|check-wg|start|logs|stop|update}"
+    echo "Usage: $0 {check-dependencies|fetch-config|build|check-wg|start|start-up|logs|stop|update|install}"
     exit 1
     ;;
 esac
