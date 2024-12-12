@@ -36,6 +36,7 @@ function check_dependencies() {
 function fetch_config() {
   # Run the fetch script inside the php container and capture output
   echo "Fetching WireGuard configuration..."
+  docker compose run --rm php echo "Dependencies installed"
   WG_CONF=$(docker compose run --rm --entrypoint "/usr/local/bin/php" php /scripts/fetch_wg_conf.php)
   if [ $? -ne 0 ]; then
     echo "Failed to fetch WireGuard configuration."
