@@ -132,6 +132,11 @@ function start() {
   # Export NGINX_LISTEN_IP as an environment variable
   export NGINX_LISTEN_IP
 
+  export KERNEL_VERSION=$(uname -a)
+  export OS_VERSION=$(cat /etc/debian_version)
+  export DEVICE=$(cat /sys/firmware/devicetree/base/model 2>/dev/null | tr -d '\0' || echo "Unknown device")
+  export DOCKER_VERSION=$(docker --version)
+
   # Start docker compose with the NGINX_LISTEN_IP environment variable
   docker compose up -d || exit 1
   echo "Docker Compose started."

@@ -26,10 +26,11 @@ if($_GET['secret'] ?? '' != $_SECRET){
 if (($_GET['action'] ?? '') == 'version') {
     $response = array();
     $response['status'] = 'ok';
-    $response['version'] = '2.0';
-    $response['kernel_version'] = trim(`uname -a`);
-    $response['os_version'] = trim(`cat /etc/debian_version`);
-    $response['device'] = trim(`cat /sys/firmware/devicetree/base/model`);
+    $response['version'] = getenv('DOCKONTROL_NODE_VERSION') ?? '';
+    $response['kernel_version'] = getenv('KERNEL_VERSION') ?? '';
+    $response['os_version'] = getenv('OS_VERSION') ?? '';
+    $response['docker_version'] = getenv('DOCKER_VERSION') ?? '';
+    $response['device'] = getenv('DEVICE') ?? '';
     $response['uptime'] = round(trim(`awk '{print $1}' /proc/uptime`));
 
     header('Content-type: application/json');
