@@ -14,6 +14,9 @@ services:
             API_PUBLIC_KEY: ${API_PUBLIC_KEY}
             API_PRIVATE_KEY: ${API_PRIVATE_KEY}
             LEGACY_API_SECRET: ${LEGACY_API_SECRET}
+            OPENWEBNET_IP: ${OPENWEBNET_IP}
+            OPENWEBNET_PORT: ${OPENWEBNET_PORT}
+            OPENWEBNET_PASSWORD: ${OPENWEBNET_PASSWORD}
         healthcheck:
             test: ["CMD-SHELL", "pgrep php-fpm"]
             interval: 10s
@@ -33,7 +36,7 @@ services:
             php:
                 condition: service_healthy
         ports:
-            - "${NGINX_LISTEN_IP}:80:80"
+            - "${NGINX_LISTEN_IP:-127.0.0.1}:80:80"
         restart: unless-stopped
         networks:
             - app-network

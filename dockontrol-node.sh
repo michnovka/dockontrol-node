@@ -28,10 +28,6 @@ function check_dependencies() {
 }
 
 function fetch_config() {
-  # Build the 'php' service (will skip if already built)
-  echo "Building the 'php' service if necessary..."
-  docker compose build php || exit 1
-
   # Run the fetch script inside the php container and capture output
   echo "Fetching WireGuard configuration..."
   WG_CONF=$(docker compose run --rm --entrypoint "/usr/local/bin/php" php /scripts/fetch_wg_conf.php)

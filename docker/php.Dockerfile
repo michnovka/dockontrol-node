@@ -11,6 +11,12 @@ RUN apt update && apt install -y \
 # Install ext-sockets (for michnovka/openwebnet-php)
 RUN docker-php-ext-install sockets
 
+# Set PHP configurations
+RUN echo "display_errors = Off" >> /usr/local/etc/php/conf.d/error_settings.ini && \
+    echo "log_errors = On" >> /usr/local/etc/php/conf.d/error_settings.ini && \
+    echo "error_log = /proc/self/fd/2" >> /usr/local/etc/php/conf.d/error_settings.ini && \
+    echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/error_settings.ini
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
