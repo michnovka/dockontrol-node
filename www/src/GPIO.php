@@ -7,6 +7,7 @@ use Exception;
 class GPIO
 {
     public const array RELAY_TO_GPIO_PIN_MAP = [
+        'WAVESHARE_8_PIN' => [
             1 => 5,
             2 => 6,
             3 => 13,
@@ -15,18 +16,33 @@ class GPIO
             6 => 20,
             7 => 21,
             8 => 26,
-        ];
+        ],
+        'WAVESHARE_3_PIN' => [
+            1 => 26,
+            2 => 20,
+            3 => 21,
+        ],
+    ];
 
     /**
      * @throws Exception
      */
-    private static function gpioExecute(int $relay, bool $state): void
+    public function __construct(private readonly string $relayBoardType)
     {
+        if(!array_key_exists($this->relayBoardType, self::RELAY_TO_GPIO_PIN_MAP)){
+            throw new Exception("Relay board type not supported");
+        }
+    }
 
-        $gpioPin = self::RELAY_TO_GPIO_PIN_MAP[$relay] ?? null;
+    /**
+     * @throws Exception
+     */
+    private function gpioExecute(int $relay, bool $state): void
+    {
+        $gpioPin = self::RELAY_TO_GPIO_PIN_MAP[$this->relayBoardType][$relay] ?? null;
 
         if(empty($gpioPin)){
-            throw new Exception("Relay must be between 1 and 8");
+            throw new Exception("Invalid relay channel ".$relay);
         }
 
         // Define GPIO chip
@@ -45,39 +61,39 @@ class GPIO
     /**
      * @throws Exception
      */
-    public static function on(int $relay): void
+    public function on(int $relay): void
     {
-        self::gpioExecute($relay, true);
+        $this->gpioExecute($relay, true);
     }
 
 
     /**
      * @throws Exception
      */
-    public static function off(int $relay): void
+    public function off(int $relay): void
     {
-        self::gpioExecute($relay, false);
+        $this->gpioExecute($relay, false);
     }
 
 
     /**
      * @throws Exception
      */
-    public static function pulse(int $relay, int $duration = 300000): void
+    public function pulse(int $relay, int $duration = 300000): void
     {
-        self::on($relay);
+        $this->on($relay);
         usleep($duration);
-        self::off($relay);
+        $this->off($relay);
     }
 
 
     /**
      * @throws Exception
      */
-    public static function doubleClick(int $relay, int $duration = 300000, int $delay = 300000): void
+    public function doubleClick(int $relay, int $duration = 300000, int $delay = 300000): void
     {
-        self::pulse($relay, $duration);
+        $this->pulse($relay, $duration);
         usleep($delay);
-        self::pulse($relay, $duration);
+        $this->pulse($relay, $duration);
     }
 }

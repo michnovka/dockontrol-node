@@ -73,11 +73,19 @@ switch($_POST['action'] ?? ''){
         try {
             switch ($_POST['type'] ?? '') {
                 case 'relay':
+                    $relayBoardType = getenv('RELAY_BOARD_TYPE');
+
+                    if(empty($relayBoardType)){
+                        APISignedError("Relay board type not configured", 400);
+                    }
+
+                    $gpio = new GPIO($relayBoardType);
+
                     if (!isset($_POST['channel'])) {
                         APISignedError("No channel", 400);
                     }
 
-                    GPIO::pulse($_POST['channel']);
+                    $gpio->pulse($_POST['channel']);
                     $response['status'] = 'ok';
                     $response['message'] = 'Relay ' . $_POST['channel'] . ' PULSE';
                     break;
@@ -109,6 +117,48 @@ switch($_POST['action'] ?? ''){
         }catch (Throwable $e){
             APISignedError($e->getMessage(), 422);
         }
+
+        break;
+    case 'camera':
+
+        if(empty($_GET['host']) || empty($_GET['channel'])) {
+            APISignedError("Missing camera info", 400);
+        }
+
+        $protocol = $_GET['protocol'] ?? 'http';
+
+        $width = intval($_GET['width'] ?? 1920);
+        $height = intval($_GET['height'] ?? 1080);
+
+        $streamUrl = $protocol.'://'.$_GET['host'].'/ISAPI/Streaming/channels/'.$_GET['channel'].'/picture?videoResolutionWidth='.$width.'&videoResolutionHeight='.$height;
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $streamUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        if(!empty($_GET['login'])) {
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+            curl_setopt($ch, CURLOPT_USERPWD, $_GET['login']);
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        $photoData = curl_exec($ch);
+
+        if(empty($photoData)) {
+            APISignedError("cURL error #".curl_errno($ch)." - ".curl_error($ch), 400);
+        }
+
+        if(!empty($_GET['return_raw'])) {
+            header('Content-type: image/jpeg');
+            echo $photoData;
+            exit;
+        }
+
+        $response['status'] = 'ok';
+        $response['photo_data'] = $photoData;
 
         break;
 }

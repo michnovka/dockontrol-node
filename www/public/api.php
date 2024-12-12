@@ -19,7 +19,7 @@ if(empty($_SECRET)) {
     APIError("No API secret configured.", 403);
 }
 
-if($_GET['secret'] ?? '' != $_SECRET){
+if(($_GET['secret'] ?? '') != $_SECRET){
     APIError("Authentication error", 403);
 }
 
@@ -52,20 +52,27 @@ if(!in_array($_GET['action'] ?? '', ['ON', 'OFF', 'PULSE', 'DOUBLECLICK'])){
 $reply = array();
 
 try {
+    $relayBoardType = getenv('RELAY_BOARD_TYPE');
+
+    if(empty($relayBoardType)){
+        APIError("Relay board type not configured", 1);
+    }
+
+    $gpio = new GPIO($relayBoardType);
 
     switch ($_GET['action']) {
         case 'ON':
-            GPIO::on($channel);
+            $gpio->on($channel);
             break;
         case 'OFF':
-            GPIO::off($channel);
+            $gpio->off($channel);
             break;
         case 'PULSE':
             $duration = intval($_GET['duration'] ?? 0);
             if(!$duration){
                 APIError("Invalid duration for PULSE", 2);
             }
-            GPIO::pulse($channel, $duration);
+            $gpio->pulse($channel, $duration);
             break;
 
         case 'DOUBLECLICK':
@@ -79,7 +86,7 @@ try {
                 APIError("Invalid pause for PULSE", 2);
             }
 
-            GPIO::doubleClick($channel, $duration, $pause);
+            $gpio->doubleClick($channel, $duration, $pause);
             break;
 
     }

@@ -28,7 +28,7 @@ nano .env
 # Build
 ./dockontrol-node.sh build
 
-# Fetch config
+# Fetch config (not needed, the start command does it too)
 ./dockontrol-node.sh fetch-config
 
 # Start
@@ -46,9 +46,15 @@ then take pull and rebuild and restart containers
 0 * * * *  /bin/bash path/to/project/dockontrol-node.sh update
 ```
 
-## Notes
+## Relay boards
 
-On 3-relay board the mapping for Relay.sh is CH8 ->1, CH6 -> 2, CH7 -> 3
+We support 2 types of relay boards from WaveShare:
+[3-relays](https://www.waveshare.com/wiki/RPi_Relay_Board(B)) and [8-relays](https://www.waveshare.com/wiki/RPi_Relay_Board_(B))
+
+They differ in GPIO pin mapping to actuators, so in order to add support, configure in `.env`
+```dotenv
+RELAY_BOARD_TYPE=WAVESHARE_3_PIN|WAVESHARE_8_PIN
+```
 
 ## TODO
 
