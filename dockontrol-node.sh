@@ -177,6 +177,9 @@ function stop() {
 }
 
 function update() {
+  # Determine whether to perform Docker updates
+  PERFORM_DOCKER_UPDATES="$1"
+
   # Resolve the absolute path to the project directory
   PROJECT_DIR=$(realpath "$(dirname "$0")")
 
@@ -211,14 +214,21 @@ function update() {
       exit 1
     fi
 
-    echo "$(date): Repository successfully updated. Proceeding with Docker updates..."
+    echo "$(date): Repository successfully updated."
 
-    # Perform Docker updates
-    docker compose down          # Stop and remove current containers
-    docker compose build         # Build the updated containers
-    docker compose up -d         # Start the new containers in detached mode
+    # Conditionally perform Docker updates
+    if [ "$PERFORM_DOCKER_UPDATES" = "with-docker" ]; then
+      echo "$(date): Proceeding with Docker updates..."
 
-    echo "$(date): Update completed, production server is now running the latest prod branch."
+      # Perform Docker updates
+      docker compose down
+      build         # Build the updated containers
+      start         # Start the new containers in detached mode
+
+      echo "$(date): Update completed, production server is now running the latest prod branch."
+    else
+      echo "$(date): Skipping Docker updates as per the request."
+    fi
   fi
 }
 
@@ -293,13 +303,16 @@ case $COMMAND in
     stop
     ;;
   update)
-    update
+    update "no-docker"  # Call update without Docker updates
+    ;;
+  auto-update)
+    update "with-docker"  # Call update with Docker updates
     ;;
   install)
     install
     ;;
   *)
-    echo "Usage: $0 {check-dependencies|fetch-config|build|check-wg|start|start-up|logs|stop|update|install}"
+    echo "Usage: $0 {check-dependencies|fetch-config|build|check-wg|start|start-up|logs|stop|update|auto-update|install}"
     exit 1
     ;;
 esac

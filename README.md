@@ -41,7 +41,7 @@ The server will then check every so often if there are new commits in the `prod`
 then take pull and rebuild and restart containers
 
 ```crontab
-0 * * * *  /bin/bash path/to/project/dockontrol-node.sh update
+0 * * * *  /bin/bash path/to/project/dockontrol-node.sh auto-update
 ```
 
 ## Relay boards
