@@ -6,6 +6,7 @@ RUN apt update && apt install -y \
     libgpiod-dev \
     netcat-openbsd \
     procps \
+    unzip\
     && rm -rf /var/lib/apt/lists/*
 
 # Install ext-sockets (for michnovka/openwebnet-php)
