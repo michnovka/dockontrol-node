@@ -15,8 +15,10 @@ I use Raspberry Pi4 together with https://www.waveshare.com/wiki/RPi_Relay_Board
 First make sure that you generated a node in DOCKontrol CP and save its API keys
 
 ```
-git clone
+git clone https://github.com/michnovka/dockontrol-node
 cd dockontrol-node
+
+git checkout prod
 
 # Edit the .env file
 cp .env.example .env
