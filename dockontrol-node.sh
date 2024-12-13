@@ -121,11 +121,6 @@ function start() {
       # Get the server IP from wg0.conf
       WG_SERVER_IP=$(awk '/Endpoint/ {print $3}' /etc/wireguard/wg0.conf | cut -d':' -f1)
 
-      # If Endpoint is not present or empty, try to get AllowedIPs
-      if [ -z "$WG_SERVER_IP" ]; then
-        WG_SERVER_IP=$(wg show wg0 peers | xargs -I {} wg show wg0 allowed-ips {} | awk '{print $2}' | cut -d'/' -f1 | head -n1)
-      fi
-
       if [ -n "$WG_SERVER_IP" ]; then
         PING_RESULT=$(ping -c 1 -W 1 "$WG_SERVER_IP")
         if echo "$PING_RESULT" | grep "1 received" > /dev/null; then
