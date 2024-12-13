@@ -14,6 +14,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Change the working directory to the script directory
 cd "$SCRIPT_DIR" || exit 1
 
+# Load environment variables from .env file
+if [ -f .env ]; then
+  export $(grep -Ev '^#' .env | xargs)
+fi
+
 COMMAND=$1
 shift
 
@@ -128,16 +133,16 @@ function start() {
     exit 1
   fi
 
-  # Get the WG0 interface IP address
-  NGINX_LISTEN_IP=$(ip -4 addr show wg0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+  # Get the WG0 interface IP address only if NGINX_LISTEN_IP is not already set
   if [ -z "$NGINX_LISTEN_IP" ]; then
-    echo "Failed to retrieve WG0 interface IP address."
-    exit 1
+    NGINX_LISTEN_IP=$(ip -4 addr show wg0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+    if [ -z "$NGINX_LISTEN_IP" ]; then
+      echo "Failed to retrieve WG0 interface IP address."
+      exit 1
+    fi
+    echo "WG0 interface IP address: $NGINX_LISTEN_IP"
+    export NGINX_LISTEN_IP
   fi
-  echo "WG0 interface IP address: $NGINX_LISTEN_IP"
-
-  # Export NGINX_LISTEN_IP as an environment variable
-  export NGINX_LISTEN_IP
 
   export KERNEL_VERSION=$(uname -a)
   export OS_VERSION=$(cat /etc/debian_version)
