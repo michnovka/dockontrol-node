@@ -22,6 +22,19 @@ fi
 COMMAND=$1
 shift
 
+
+# Function to check if the system time is synced
+is_time_synced() {
+    # Retrieve the value of SystemClockSynchronized property
+    local time_sync_status
+    time_sync_status=$(timedatectl show -p NTPSynchronized --value)
+    if [ "$time_sync_status" == "yes" ]; then
+        return 0  # time is synchronized
+    else
+        return 1  # time is not synchronized
+    fi
+}
+
 function check_dependencies() {
   DEPENDENCIES=("wg" "wg-quick" "docker" "git")
   MISSING_DEPS=()
@@ -155,6 +168,18 @@ function start() {
 }
 
 function start_up() {
+  # Wait until time is synchronized
+  echo "Waiting for time synchronization..."
+  while true; do
+    if is_time_synced; then
+      echo "Time is synchronized."
+      break
+    else
+      echo -n "."
+      sleep 5
+    fi
+  done
+
   # Wait until 1.1.1.1 or 8.8.8.8 is pingable
   echo "Waiting for internet connectivity..."
   while true; do
