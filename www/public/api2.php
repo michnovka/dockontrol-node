@@ -121,25 +121,25 @@ switch($_POST['action'] ?? ''){
         break;
     case 'camera':
 
-        if(empty($_GET['host']) || empty($_GET['channel'])) {
+        if(empty($_POST['host']) || empty($_POST['channel'])) {
             APISignedError("Missing camera info", 400);
         }
 
-        $protocol = $_GET['protocol'] ?? 'http';
+        $protocol = $_POST['protocol'] ?? 'http';
 
-        $width = intval($_GET['width'] ?? 1920);
-        $height = intval($_GET['height'] ?? 1080);
+        $width = intval($_POST['width'] ?? 1920);
+        $height = intval($_POST['height'] ?? 1080);
 
-        $streamUrl = $protocol.'://'.$_GET['host'].'/ISAPI/Streaming/channels/'.$_GET['channel'].'/picture?videoResolutionWidth='.$width.'&videoResolutionHeight='.$height;
+        $streamUrl = $protocol.'://'.$_POST['host'].'/ISAPI/Streaming/channels/'.$_POST['channel'].'/picture?videoResolutionWidth='.$width.'&videoResolutionHeight='.$height;
 
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $streamUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        if(!empty($_GET['login'])) {
+        if(!empty($_POST['login'])) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-            curl_setopt($ch, CURLOPT_USERPWD, $_GET['login']);
+            curl_setopt($ch, CURLOPT_USERPWD, $_POST['login']);
         }
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -151,7 +151,7 @@ switch($_POST['action'] ?? ''){
             APISignedError("cURL error #".curl_errno($ch)." - ".curl_error($ch), 400);
         }
 
-        if(!empty($_GET['return_raw'])) {
+        if(!empty($_POST['return_raw'])) {
             header('Content-type: image/jpeg');
             echo $photoData;
             exit;
