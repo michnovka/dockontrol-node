@@ -23,7 +23,7 @@ services:
             OPENWEBNET_PORT: ${OPENWEBNET_PORT:-}
             OPENWEBNET_PASSWORD: ${OPENWEBNET_PASSWORD:-}
             RELAY_BOARD_TYPE: ${RELAY_BOARD_TYPE:-}
-            DOCKONTROL_NODE_VERSION: 2.0
+            DOCKONTROL_NODE_VERSION: 2.1
         healthcheck:
             test: ["CMD-SHELL", "pgrep php-fpm"]
             interval: 10s
