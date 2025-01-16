@@ -85,7 +85,20 @@ switch($_POST['action'] ?? ''){
                         APISignedError("No channel", 400);
                     }
 
-                    $gpio->pulse($_POST['channel']);
+                    $duration = 500000;
+
+                    if (isset($_POST['duration'])) {
+                        if(!is_numeric($_POST['duration'])) {
+                            APISignedError("Invalid duration value. Must be int.", 400);
+                        }
+
+                        $duration = intval($_POST['duration']);
+                        if($duration < 100000 || $duration > 1000000){
+                            APISignedError("Duration value must be between 100,000us and 1,000,000us", 400);
+                        }
+                    }
+
+                    $gpio->pulse($_POST['channel'], $duration);
                     $response['status'] = 'ok';
                     $response['message'] = 'Relay ' . $_POST['channel'] . ' PULSE';
                     break;

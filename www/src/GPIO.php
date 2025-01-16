@@ -77,6 +77,7 @@ class GPIO
 
 
     /**
+     * @param int $duration value in microseconds
      * @throws Exception
      */
     public function pulse(int $relay, int $duration = 300000): void
@@ -88,6 +89,8 @@ class GPIO
 
 
     /**
+     * @param int $duration value in microseconds
+     * @param int $delay value in microseconds
      * @throws Exception
      */
     public function doubleClick(int $relay, int $duration = 300000, int $delay = 300000): void
